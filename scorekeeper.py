@@ -1,10 +1,10 @@
 class TichuGame:
-    def __init__(self):
+    def __init__(self, teamlist):
         self.rounds = []
         self.score1 = 0
         self.score2 = 0
-        self.team1 = []
-        self.team2 = []
+        self.team1 = teamlist[:2]
+        self.team2 = teamlist[2:4]
         self.calls = {}
 
     
@@ -34,7 +34,7 @@ class TichuGame:
 
     def check_tichus(self, calls, finish_order):
         winner = finish_order[0]
-        for player, value in calls.items:
+        for player, value in calls.items():
             points = value if player == winner else -value
 
             if player in self.team1:
@@ -43,9 +43,9 @@ class TichuGame:
                 self.score2 += points
 
     def check_onetwo(self, finish_order, team1, team2):
-        if team1[0] and team1[1] in finish_order[:1]:
+        if finish_order[0] in team1 and finish_order[1] in team1:
             return "Team 1"
-        elif team2[0] and team2[1] in finish_order[:1]:
+        elif finish_order[0] in team2 and finish_order[1] in team2:
             return "Team 2"
         return None  
 
