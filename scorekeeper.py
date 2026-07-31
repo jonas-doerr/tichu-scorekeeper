@@ -1,0 +1,2 @@
+class TichuGame:
+    pass
