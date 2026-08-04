@@ -8,34 +8,49 @@ class TichuGame:
         self.calls = {}
 
     
-    def add_round(self, score1, score2, finish_order, calls):
+    def add_round(self, round):
 
         #Check for 1-2
-        onetwo = self.check_onetwo(finish_order, self.team1, self.team2)
+        onetwo = self.check_onetwo(round.finish_order, self.team1, self.team2)
         if onetwo == "Team 1":
             self.score1 += 200
         elif onetwo == "Team 2":
             self.score2 += 200
         else:
             #Add base score
-            self.score1 += score1
-            self.score2 += score2
+            self.score1 += round.score1
+            self.score2 += round.score2
 
         #Check for Tichus
-        self.check_tichus(calls, finish_order)
+        self.check_tichus(round.calls, round.finish_order)
 
         self.rounds.append({
-            "team1": score1,
-            "team2": score2,
+            "team1": round.score1,
+            "team2": round.score2,
             "one_two": onetwo,
-            "finish_order": finish_order,
-            "calls": calls
+            "finish_order": round.finish_order,
+            "calls": round.calls
         })
+
+        #add stats
+        for place, player in enumerate(round.finish_order, start=1):
+            player.placements[place] += 1
 
     def check_tichus(self, calls, finish_order):
         winner = finish_order[0]
         for player, value in calls.items():
-            points = value if player == winner else -value
+            if player == winner:
+                points = value 
+                if points == 100:
+                    player.tichus_won += 1 
+                else:
+                    player.grand_tichus_won += 1
+            else:
+                points = -value
+                if points == 100:
+                    player.tichus_lost += 1 
+                else:
+                    player.grand_tichus_lost += 1
 
             if player in self.team1:
                 self.score1 += points
@@ -51,18 +66,52 @@ class TichuGame:
 
     def winner(self):
         if self.score1 >= 1000 and self.score1 > self.score2:
+            for player in self.team1: 
+                player.games_won += 1
             return "Team 1"
         elif self.score2 >= 1000 and self.score2 > self.score1:
+            for player in self.team2: 
+                player.games_won += 1
             return "Team 2"
         return None
 
 class Player:
     def __init__(self, name):
         self.name = name
-        self.small_tichu_wins = 0
-        self.small_tichu_losses = 0
-        self.grand_tichu_wins = 0
-        self.grand_tichu_losses = 0
+
+        # Games
+        self.games_played = 0
+        self.games_won = 0
+
+        # Rounds
+        self.rounds_played = 0
+
+        # Placements
+        self.placements = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0
+        }
+
+        # Tichus
+        self.tichus_called = 0
+        self.tichus_won = 0
+        self.tichus_lost = 0
+
+        self.grand_tichus_called = 0
+        self.grand_tichus_won = 0
+        self.grand_tichus_lost = 0
+
+class Round:
+    def __init__(self, team1_points, team2_points, finish_order, calls):
+        self.score1 = team1_points
+        self.score2 = team2_points
+        self.finish_order = finish_order      # list of Player objects
+        self.calls = calls                    # {Player: "tichu"}
+
+        self.one_two = None
+        self.tichu_results = {}
 
 class Database:
     pass
