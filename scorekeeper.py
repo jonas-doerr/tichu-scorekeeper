@@ -24,13 +24,7 @@ class TichuGame:
         #Check for Tichus
         self.check_tichus(round.calls, round.finish_order)
 
-        self.rounds.append({
-            "team1": round.score1,
-            "team2": round.score2,
-            "one_two": onetwo,
-            "finish_order": round.finish_order,
-            "calls": round.calls
-        })
+        self.rounds.append(round)
 
         #add stats
         for place, player in enumerate(round.finish_order, start=1):
@@ -41,13 +35,13 @@ class TichuGame:
         for player, value in calls.items():
             if player == winner:
                 points = value 
-                if points == 100:
+                if value == 100:
                     player.tichus_won += 1 
                 else:
                     player.grand_tichus_won += 1
             else:
                 points = -value
-                if points == 100:
+                if value == 100:
                     player.tichus_lost += 1 
                 else:
                     player.grand_tichus_lost += 1
@@ -74,6 +68,17 @@ class TichuGame:
                 player.games_won += 1
             return "Team 2"
         return None
+    
+    def __str__(self):
+        return (
+            f"Tichu Game\n"
+            f"----------\n"
+            f"Team 1: {self.team1[0].name} & {self.team1[1].name}\n"
+            f"Team 2: {self.team2[0].name} & {self.team2[1].name}\n"
+            f"Score: {self.score1} - {self.score2}\n"
+            f"Rounds Played: {len(self.rounds)}\n"
+            f"Winner: {self.winner() or 'None'}"
+        )
 
 class Player:
     def __init__(self, name):
@@ -103,15 +108,93 @@ class Player:
         self.grand_tichus_won = 0
         self.grand_tichus_lost = 0
 
+    def reset_stats(self):
+        # Games
+        self.games_played = 0
+        self.games_won = 0
+
+        # Rounds
+        self.rounds_played = 0
+
+        # Placements
+        self.placements = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0
+        }
+
+        # Tichus
+        self.tichus_called = 0
+        self.tichus_won = 0
+        self.tichus_lost = 0
+
+        self.grand_tichus_called = 0
+        self.grand_tichus_won = 0
+        self.grand_tichus_lost = 0
+
+    def __str__(self):
+        return (
+            f"{self.name}\n"
+            f"  Placings:\n"
+            f"    1st: {self.placements[1]}\n"
+            f"    2nd: {self.placements[2]}\n"
+            f"    3rd: {self.placements[3]}\n"
+            f"    4th: {self.placements[4]}\n"
+            f"  Tichus:\n"
+            f"    Called: {self.tichus_called}\n"
+            f"    Won: {self.tichus_won}\n"
+            f"    Lost: {self.tichus_lost}"
+        )
+
 class Round:
-    def __init__(self, team1_points, team2_points, finish_order, calls):
+    def __init__(self, team1_points, team2_points, finish_order, calls, team1, team2):
         self.score1 = team1_points
         self.score2 = team2_points
         self.finish_order = finish_order      # list of Player objects
         self.calls = calls                    # {Player: "tichu"}
 
-        self.one_two = None
+        if finish_order[0] in team1 and finish_order[1] in team1:
+            self.one_two = "Team 1"
+        elif finish_order[0] in team2 and finish_order[1] in team2:
+            self.one_two = "Team 2"
+        else:
+            self.one_two = None
+        
+        #define self.tichu_results{}
         self.tichu_results = {}
+        for player, call in self.calls.items():
+            success = (player == self.finish_order[0])
+            if call == 100:
+                call_name = "Tichu"
+            else:
+                call_name = "Grand Tichu"
+
+            self.tichu_results[player] = {
+                "call": call_name,
+                "success": success
+            }
+    def __str__(self):
+
+        finish = ", ".join(player.name for player in self.finish_order)
+
+        if self.calls:
+            calls = ", ".join(
+                f"{player.name}: {call}"
+                for player, call in self.calls.items()
+            )
+        else:
+            calls = "None"
+
+        return (
+            f"Round\n"
+            f"-------\n"
+            f"Team 1: {self.team1_points}\n"
+            f"Team 2: {self.team2_points}\n"
+            f"Finish: {finish}\n"
+            f"Calls: {calls}\n"
+            f"One-Two: {self.one_two}"
+        )
 
 class Database:
     pass
