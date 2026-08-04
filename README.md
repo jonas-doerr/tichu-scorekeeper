@@ -6,10 +6,9 @@ This program tracks scores for the card game Tichu and stores the data from each
 I created the program and set up a file structure. Then I built a simulator that can play a full game of tichu (based on random results) and collect data. 
 
 ### 8.4
-Changed the TichuGame class to accept a Round class instead of a lot of variables. I improved the Player() class and underlying logic to better record statistics.
+Changed the TichuGame class to accept a Round class instead of a lot of variables. I improved the Player() class and underlying logic to better record statistics. Improved debugging by adding __str__ attributes to each class.
 
 ## To-do
--Improve Player statistics
 -Add save/load with SQLite
 -Make Streamlit interface
 -Add charts/analysis

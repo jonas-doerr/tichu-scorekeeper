@@ -4,8 +4,8 @@ import random
 #Random player nanmes for testing
 player1 = Player("Simon")
 player2 = Player("Jonas")
-player3 = Player("Dad")
-player4 = Player("Mom")
+player3 = Player("Micah")
+player4 = Player("Mr. Bunny")
 playerlist = [player1, player2, player3, player4]
 
 game = TichuGame(playerlist)
