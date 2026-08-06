@@ -44,6 +44,7 @@ def simulate_game():
         score = random.randint(-5, 20) * 5
         round = Round(score, 100 - score, make_random_finish(playerlist), make_random_calls(playerlist), playerlist[:2], playerlist[2:4])
         game.add_round(round)
+
         print(f"{game.score1} to {game.score2}")
 
     print(game)
@@ -57,7 +58,22 @@ def simulate_game():
         save_player(player)
 
     current_date = date.today()
-    save_game(current_date, game.winner(), game.score1, game.score2)
+    save_game(current_date, game.score1, game.score2)
+
+    for round_number, round_data in enumerate(game.rounds, start=1):
+        round_id = save_round(game_id, round_number, round_data)
+
+        save_placements(round_id, round_data)
+        save_calls(round_id, round_data)
 
 simulate_game()
-view_games()
+
+#print database results
+# Options: "players", "games", "rounds", "placements", "calls"
+checked_data_tables = [
+        "players",
+        "games",
+        "calls"
+    ]
+for table in checked_data_tables:
+    view_table(table)
