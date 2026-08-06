@@ -14,6 +14,8 @@ Made a function to store player data in SQLite database. Learned a lot about SQL
 ### 8.6
 Struggling a lot with saving all of the different data into SQLite using object-oriented programming. Debugged a few things, like player_id not storing correctly, and now everything is being stored properly. Can begin with web app.
 
+Made a framework for the website. Still non-functional. I need to add add_player functions, improve the interface, and then link it up to actually store data. 
+
 ## To-do
 - Make Streamlit interface
 - Add charts/analysis

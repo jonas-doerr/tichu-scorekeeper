@@ -198,6 +198,18 @@ def view_table(table_name):
 
     conn.close()
 
+def get_players():
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, name FROM players")
+
+    players = cursor.fetchall()
+
+    conn.close()
+
+    return players
+
 cursor.execute("SELECT * FROM players")
 
 players = cursor.fetchall()
