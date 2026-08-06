@@ -1,11 +1,13 @@
 from scorekeeper import TichuGame, Player, Round
+from database import *
 import random
+from datetime import date
 
 #Random player nanmes for testing
 player1 = Player("Simon")
 player2 = Player("Jonas")
 player3 = Player("Micah")
-player4 = Player("Mr. Bunny")
+player4 = Player("Mom")
 playerlist = [player1, player2, player3, player4]
 
 game = TichuGame(playerlist)
@@ -52,5 +54,10 @@ def simulate_game():
     for player in playerlist:
         print(player)
         print()
+        save_player(player)
+
+    current_date = date.today()
+    save_game(current_date, game.winner(), game.score1, game.score2)
 
 simulate_game()
+view_games()

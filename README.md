@@ -9,7 +9,7 @@ I created the program and set up a file structure. Then I built a simulator that
 Changed the TichuGame class to accept a Round class instead of a lot of variables. I improved the Player() class and underlying logic to better record statistics. Improved debugging by adding __str__ attributes to each class.
 
 ### 8.5
-Made a function to store player data in SQLite database.
+Made a function to store player data in SQLite database. Learned a lot about SQLite (this is my first time using it). Also can store some game data now.
 
 ## To-do
 -Add save/load with SQLite
