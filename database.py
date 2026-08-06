@@ -1,4 +1,5 @@
 import sqlite3
+from scorekeeper import player
 
 conn = sqlite3.connect("tichu.db")
 
@@ -10,6 +11,18 @@ CREATE TABLE IF NOT EXISTS players (
     name TEXT           
 )
 """)
+
+def save_player(player): 
+    cursor.execute(
+        "INSERT INTO players(name) VALUES (?)",
+        (player.name,)
+    )
+
+cursor.execute("SELECT * FROM players")
+
+players = cursor.fetchall()
+
+print(players)
 
 conn.commit()
 
