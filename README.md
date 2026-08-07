@@ -19,7 +19,9 @@ Made a framework for the website. Still non-functional. I need to add add_player
 ### 8.7
 Created the widgets for all necessary parts of the scorekeeper. It still does not store data accurately, but I debugged several issues that came up, as I improve my knowledge of Streamlit. 
 
+I put in a lot more work on the streamlit interface. Now it has a sortable list for turn order, shows an updated score, and accurately tracks the game. Still need to store data in database accurately.
+
 ## To-do
-- Make Streamlit interface
+- Finish Streamlit interface
 - Add charts/analysis
 - Deploy

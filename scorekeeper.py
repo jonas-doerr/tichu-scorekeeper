@@ -81,8 +81,9 @@ class TichuGame:
         )
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, id = None):
         self.name = name
+        self.id = id
 
         # Games
         self.games_played = 0
