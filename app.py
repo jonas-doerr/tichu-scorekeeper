@@ -26,18 +26,18 @@ if st.button("Start Game"):
         st.warning("Choose 4 players")
 
     else:
-        team1 = [
+        st.session_state.team1 = [
             Player(selected_players[0]),
             Player(selected_players[1])
         ]
 
-        team2 = [
+        st.session_state.team2 = [
             Player(selected_players[2]),
             Player(selected_players[3])
         ]
 
         st.session_state.game = TichuGame(
-            team1 + team2
+            st.session_state.team1 + st.session_state.team2
         )
 
         st.success("Game started!")
@@ -50,23 +50,80 @@ if st.session_state.game:
         f"Score: {game.score1} - {game.score2}"
     )
 
-    team1_score = st.number_input(
+    team1_score = st.slider(
         "Team 1 score",
-        value=50
+        min_value=-25,
+        max_value=125,
+        value=50,
+        step=5
     )
 
-    team2_score = st.number_input(
-        "Team 2 score",
-        value=50
-    )
+    team2_score = 100 - team1_score
+    st.write(f"{team1_score} to {team2_score}")
+
+    #Create Finish Order
+    players = st.session_state.team1 + st.session_state.team2
+    st.subheader("Finish Order")
+    finish_order = []
+    available_players = players.copy()
+
+    for place in range(1, 5):
+        selected = st.selectbox(
+            f"{place}st" if place == 1 else f"{place}th",
+            available_players,
+            format_func=lambda player: player.name,
+            key=f"finish_{place}"
+        )
+
+        finish_order.append(selected)
+
+        available_players = [
+            player for player in available_players
+            if player.name != selected.name
+        ]
+
+    st.write("Finish order:", [player.name for player in finish_order])
+
+    col1, col2 = st.columns(2)
+
+    #Record any Tichus
+    with col1:
+        for player in st.session_state.team1:
+            call = st.radio(
+                player.name,
+                ["None", "Tichu", "Grand Tichu"],
+                key=f"{player.name}_call",
+                horizontal=True
+            )
+
+    with col2:
+            for player in st.session_state.team2:
+                call = st.radio(
+                    player.name,
+                    ["None", "Tichu", "Grand Tichu"],
+                    key=f"{player.name}_call",
+                    horizontal=True
+                )
+
+    calls = {}
+
+    for player in st.session_state.team1 + st.session_state.team2:
+        call = st.session_state[f"{player.name}_call"]
+
+        if call == "Tichu":
+            calls[player] = 100
+        elif call == "Grand Tichu":
+            calls[player] = 200
 
     if st.button("Add Round"):
 
         round_data = Round(
             team1_score,
             team2_score,
-            [],
-            {}
+            finish_order,
+            calls,
+            st.session_state.team1,
+            st.session_state.team2
         )
 
         game.add_round(round_data)

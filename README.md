@@ -16,6 +16,9 @@ Struggling a lot with saving all of the different data into SQLite using object-
 
 Made a framework for the website. Still non-functional. I need to add add_player functions, improve the interface, and then link it up to actually store data. 
 
+### 8.7
+Created the widgets for all necessary parts of the scorekeeper. It still does not store data accurately, but I debugged several issues that came up, as I improve my knowledge of Streamlit. 
+
 ## To-do
 - Make Streamlit interface
 - Add charts/analysis
