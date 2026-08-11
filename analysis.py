@@ -1,4 +1,4 @@
-from database import get_players, get_player_placements, view_games, get_player_calls
+from database import get_players, get_player_placements, view_games, get_player_calls, get_one_two
 
 players = get_players()
 
@@ -47,7 +47,15 @@ def call_stats(player_id):
 
     return tichus, grand_tichus, successful_tichus, successful_grand_tichus
 
-# def count_one_two(player_id):
-#     one_twos = get_one_two(player_id)
-#     total_one_twos = len([one_two for one_two in one_twos if one_two != None])
-#     return total_one_twos
+def count_one_two(player_id):
+    one_twos = get_one_two(player_id)
+    own_one_twos = 0
+    other_one_twos = 0
+    total = 0
+    for result in one_twos:
+        if result == 1:
+            own_one_twos += 1
+        elif result == -1:
+            other_one_twos += 1
+        total += 1
+    return own_one_twos, other_one_twos, total

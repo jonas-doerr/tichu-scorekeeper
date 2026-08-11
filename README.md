@@ -2,6 +2,7 @@
 
 This program tracks scores for the card game Tichu and stores the data from each game. It also (in the future) provides analysis on that data.
 
+## Journal
 ### 7.31
 I created the program and set up a file structure. Then I built a simulator that can play a full game of tichu (based on random results) and collect data. 
 
@@ -24,7 +25,12 @@ I put in a lot more work on the streamlit interface. Now it has a sortable list 
 ### 8.11
 The round scoring wasn't working correctly, so I returned to my round storage logic and fixed it after debugging several things, like player objects not matching up because I put a list inside a list.
 
+Then I spent a ton of time upgradiong the web app and creating statistics and new pages for the app. It is now nearly complete. At this point it is mostly repetitive, just pulling different data out of the database to make stats with. The hardest part was realizing I had nothing to record the teams players were on, so I deleted my database and made a new table with that information.
+
 ## To-do
-- Finish Streamlit interface
-- Add charts/analysis
+- Games won stats
+- Player addition
+- Stats with different teammates?
+- Undo button?
+- Improve README
 - Deploy

@@ -303,21 +303,28 @@ def get_player_calls(player_id):
 
     return calls
 
-# def get_one_two(player_id):
-#     conn = sqlite3.connect("tichu.db")
-#     cursor = conn.cursor()
+def get_one_two(player_id):
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
 
-#     cursor.execute("""
-#         SELECT one_two
-#         FROM rounds
-#         WHERE player_id = ?
-#     """, (player_id,))
+    cursor.execute("""
+        SELECT
+            CASE
+                WHEN rounds.one_two IS NULL THEN 0
+                WHEN rounds.one_two = 'Team ' || game_players.team THEN 1
+                ELSE -1
+            END
+        FROM rounds
+        JOIN game_players
+            ON rounds.game_id = game_players.game_id
+        WHERE game_players.player_id = ?
+    """, (player_id,))
 
-#     one_twos = cursor.fetchall()
+    one_twos = cursor.fetchall()
 
-#     conn.close()
+    conn.close()
 
-#     return one_twos
+    return [row[0] for row in one_twos]
 
 cursor.execute("SELECT * FROM players")
 

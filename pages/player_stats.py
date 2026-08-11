@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from database import get_players, get_player_placements, get_games_played, get_player_calls
-from analysis import placement_list, call_stats
+from analysis import placement_list, call_stats, count_one_two
 
 
 st.title("Player Statistics")
@@ -96,7 +96,20 @@ fig = px.bar(
     title=f"{selected_name}'s Tichu Performance"
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width='stretch')
 
-# one_twos = count_one_two(st.session_state.selected_player_id)
-# st.metric("One-twos", one_twos)
+one_twos_for, one_twos_against, total_rounds = count_one_two(st.session_state.selected_player_id)
+
+col7, col8, col9, col10 = st.columns(4)
+
+with col7:
+    st.metric("1-2s for", one_twos_for)
+with col8:
+    st.metric("1-2s against", one_twos_against)
+with col9:
+    st.metric("Rounds with 1-2 for", f"{one_twos_for / total_rounds * 100:.1f}%"
+                if total_rounds else "N/A")
+with col10:
+    st.metric("Rounds with 1-2 against",
+            f"{one_twos_against / total_rounds * 100:.1f}%"
+            if total_rounds else "N/A")
