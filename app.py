@@ -51,8 +51,8 @@ if st.button("Start Game"):
 
         st.session_state.players = selected_players
 
-        st.session_state.team1 = [selected_players[:2]]
-        st.session_state.team2 = [selected_players[2:]]
+        st.session_state.team1 = selected_players[:2]
+        st.session_state.team2 = selected_players[2:]
 
         st.session_state.game = TichuGame(
             selected_players
@@ -63,13 +63,13 @@ if st.button("Start Game"):
 if st.session_state.game:
 
     game = st.session_state.game
-
-    st.write(
+    
+    st.header(
         f"Score: {game.score1} - {game.score2}"
     )
 
     st.session_state.team1_score = st.slider(
-        "Team 1 score",
+        "Record Team 1 score (Team 2 score is automatically calculated)",
         min_value=-25,
         max_value=125,
         value=50,
@@ -138,7 +138,7 @@ if st.session_state.game:
             st.session_state.team2
         )
 
-        game.add_round(round_data)
+        st.session_state.round_score1, st.session_state.round_score2 = game.add_round(round_data)
 
         st.success("Round added")
 
@@ -150,5 +150,5 @@ if st.session_state.game:
         for number, round_data in enumerate(game.rounds, start=1):
             st.write(
                 f"Round {number}: "
-                f"{round_data.score1}-{round_data.score2}"
+                f"{round_data.final_score1} to {round_data.final_score2} ({round_data.one_two})"
             )

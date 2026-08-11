@@ -9,7 +9,8 @@ class TichuGame:
 
     
     def add_round(self, round):
-
+        round_score1 = self.score1
+        round_score2 = self.score2
         #Check for 1-2
         onetwo = self.check_onetwo(round.finish_order, self.team1, self.team2)
         if onetwo == "Team 1":
@@ -29,6 +30,10 @@ class TichuGame:
         #add stats
         for place, player in enumerate(round.finish_order, start=1):
             player.placements[place] += 1
+
+        round_score1 = self.score1 - round_score1
+        round_score2 = self.score2 - round_score2
+        return round_score1, round_score2
 
     def check_tichus(self, calls, finish_order):
         winner = finish_order[0]
@@ -152,13 +157,19 @@ class Round:
     def __init__(self, team1_points, team2_points, finish_order, calls, team1, team2):
         self.score1 = team1_points
         self.score2 = team2_points
+        self.final_score1 = team1_points
+        self.final_score2 = team2_points
         self.finish_order = finish_order      # list of Player objects
         self.calls = calls                    # {Player: "tichu"}
 
         if finish_order[0] in team1 and finish_order[1] in team1:
             self.one_two = "Team 1"
+            self.final_score1 = 200
+            self.final_score2 = 0
         elif finish_order[0] in team2 and finish_order[1] in team2:
             self.one_two = "Team 2"
+            self.final_score2 = 200
+            self.final_score1 = 0
         else:
             self.one_two = None
         
@@ -171,10 +182,22 @@ class Round:
             else:
                 call_name = "Grand Tichu"
 
+            if success:
+                if player in team1:
+                    self.final_score1 += call
+                else:
+                    self.final_score2 += call
+            else:
+                if player in team1:
+                    self.final_score1 -= call
+                else:
+                    self.final_score2 -= call
+
             self.tichu_results[player] = {
                 "call": call_name,
                 "success": success
             }
+
     def __str__(self):
 
         finish = ", ".join(player.name for player in self.finish_order)
@@ -190,8 +213,8 @@ class Round:
         return (
             f"Round\n"
             f"-------\n"
-            f"Team 1: {self.team1_points}\n"
-            f"Team 2: {self.team2_points}\n"
+            f"Team 1: {self.final_score2}\n"
+            f"Team 2: {self.final_score1}\n"
             f"Finish: {finish}\n"
             f"Calls: {calls}\n"
             f"One-Two: {self.one_two}"

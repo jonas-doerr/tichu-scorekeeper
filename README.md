@@ -21,6 +21,9 @@ Created the widgets for all necessary parts of the scorekeeper. It still does no
 
 I put in a lot more work on the streamlit interface. Now it has a sortable list for turn order, shows an updated score, and accurately tracks the game. Still need to store data in database accurately.
 
+### 8.11
+The round scoring wasn't working correctly, so I returned to my round storage logic and fixed it after debugging several things, like player objects not matching up because I put a list inside a list.
+
 ## To-do
 - Finish Streamlit interface
 - Add charts/analysis
