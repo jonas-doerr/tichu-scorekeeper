@@ -1,8 +1,10 @@
 import streamlit as st
+import pandas as pd
 
 from scorekeeper import Player, Round, TichuGame
-from database import save_game, save_round, save_placements, save_calls, get_players
+from database import save_game, save_round, save_placements, save_calls, get_players, view_games, save_teams
 from streamlit_sortables import sort_items
+from datetime import date
 
 st.title("Tichu Scorekeeper")
 
@@ -63,13 +65,21 @@ if st.button("Start Game"):
 if st.session_state.game:
 
     game = st.session_state.game
+
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.subheader(f"{" and ".join(player.name for player in st.session_state.team1)}")
+        st.header(f"{game.score1}")
     
-    st.header(
-        f"Score: {game.score1} - {game.score2}"
-    )
+    with col4:
+        st.subheader(f"{" and ".join(player.name for player in st.session_state.team2)}")
+        st.header(f"{game.score2}")
+
 
     st.session_state.team1_score = st.slider(
-        "Record Team 1 score (Team 2 score is automatically calculated)",
+        f"Record {" and ".join(player.name for player in st.session_state.team1)}'s score "
+        f"({" and ".join(player.name for player in st.session_state.team2)}'s score is automatically calculated)",
         min_value=-25,
         max_value=125,
         value=50,
@@ -150,5 +160,21 @@ if st.session_state.game:
         for number, round_data in enumerate(game.rounds, start=1):
             st.write(
                 f"Round {number}: "
-                f"{round_data.final_score1} to {round_data.final_score2} ({round_data.one_two})"
+                f"{round_data.final_score1} to {round_data.final_score2}"
             )
+
+    if st.button("End Game") or game.winner() != None:
+        #Find today's date and save the game file
+        currentdate = date.today()
+        st.session_state.game_id = save_game(currentdate, game.score1, game.score2)
+        save_teams(st.session_state.game_id, st.session_state.team1, st.session_state.team2)
+
+        #Save the rounds, placements, and calls
+        for round_number, round_data in enumerate(game.rounds, start=1):
+            round_id = save_round(st.session_state.game_id, round_number, round_data)
+
+            save_placements(round_id, round_data)
+            save_calls(round_id, round_data)
+
+        st.write(f"Game over! Final score: {game.score1} to {game.score2}")
+        st.session_state.game = None

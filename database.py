@@ -57,6 +57,16 @@ CREATE TABLE IF NOT EXISTS calls (
 )
 """)
 
+#Teams table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS game_players (
+    game_id INTEGER,
+    player_id INTEGER,
+    team INTEGER,
+    PRIMARY KEY (game_id, player_id)
+)
+""")
+
 def save_player(player): 
     conn = sqlite3.connect("tichu.db")
     cursor = conn.cursor()
@@ -92,6 +102,35 @@ def save_game(date, score1, score2):
         VALUES (?, ?, ?)""",
         (date, score1, score2)
     )
+
+    game_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
+    return game_id
+
+def save_teams(game_id, team1, team2):
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
+
+    for player in team1:
+        cursor.execute(
+            """
+            INSERT INTO game_players(game_id, player_id, team)
+            VALUES (?, ?, ?)
+            """,
+            (game_id, player.id, 1)
+        )
+
+    for player in team2:
+        cursor.execute(
+            """
+            INSERT INTO game_players(game_id, player_id, team)
+            VALUES (?, ?, ?)
+            """,
+            (game_id, player.id, 2)
+        )
 
     conn.commit()
     conn.close()
@@ -164,12 +203,16 @@ def view_games():
     conn = sqlite3.connect("tichu.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM games")
+    cursor.execute("""
+        SELECT * FROM games
+        ORDER BY id desc
+    """)
 
-    for game in cursor.fetchall():
-        print(game)
+    games = cursor.fetchall()
 
     conn.close()
+
+    return games
 
 def view_table(table_name):
     allowed_tables = [
@@ -209,6 +252,72 @@ def get_players():
     conn.close()
 
     return players
+
+def get_player_placements(player_id):
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT placement
+        FROM placements
+        WHERE player_id = ?
+    """, (player_id,))
+
+    placements = cursor.fetchall()
+
+    conn.close()
+
+    return [row[0] for row in placements]
+
+def get_games_played(player_id):
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(DISTINCT rounds.game_id)
+        FROM placements
+        JOIN rounds
+            ON placements.round_id = rounds.id
+        WHERE placements.player_id = ?
+    """, (player_id,))
+
+    games_played = cursor.fetchone()[0]
+
+    conn.close()
+
+    return games_played
+
+def get_player_calls(player_id):
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT call_type, success
+        FROM calls
+        WHERE player_id = ?
+    """, (player_id,))
+
+    calls = cursor.fetchall()
+
+    conn.close()
+
+    return calls
+
+# def get_one_two(player_id):
+#     conn = sqlite3.connect("tichu.db")
+#     cursor = conn.cursor()
+
+#     cursor.execute("""
+#         SELECT one_two
+#         FROM rounds
+#         WHERE player_id = ?
+#     """, (player_id,))
+
+#     one_twos = cursor.fetchall()
+
+#     conn.close()
+
+#     return one_twos
 
 cursor.execute("SELECT * FROM players")
 
