@@ -69,7 +69,7 @@ try:
         st.metric("Win Rate", f"{100 * win_rate:.1f}%")
 
     with col12:
-        st.metric("Average Score Difference", f"{avg_score_diff}")
+        st.metric("Average Score Difference", f"{avg_score_diff:.0f}")
 
     st.subheader(f"{selected_name}'s Placements")
     st.bar_chart(df, x="Placement", y="Count")
