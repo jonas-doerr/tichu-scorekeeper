@@ -63,7 +63,7 @@ def make_random_finish(playerlist, calls):
         finish_order.append(chosen_player)
         remaining.remove(chosen_player)
 
-    print([player.name for player in finish_order])
+    # print([player.name for player in finish_order])
     return finish_order
 
 def make_random_calls(players, game):
@@ -116,7 +116,7 @@ def simulate_game(playerlist):
         round = Round(score, 100 - score, make_random_finish(playerlist, calls), calls, playerlist[:2], playerlist[2:4])
         game.add_round(round)
 
-        print(f"{game.score1} to {game.score2}")
+        # print(f"{game.score1} to {game.score2}")
 
     # print(game)
 

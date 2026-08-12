@@ -27,7 +27,9 @@ The round scoring wasn't working correctly, so I returned to my round storage lo
 
 Then I spent a ton of time upgrading the web app and creating statistics and new pages for the app. It is now nearly complete. At this point it is mostly repetitive, just pulling different data out of the database to make stats with. The hardest part was realizing I had nothing to record the teams players were on, so I deleted my database and made a new table with that information.
 
+### 8.12
+Added in several features, like the ability to simulate games on the website, an undo button, and an add player function. Prepared to deploy website.
+
 ## To-do
-- Simulate games
 - Improve README
 - Deploy
