@@ -1,4 +1,4 @@
-from database import get_players, get_player_placements, view_games, get_player_calls, get_one_two
+from database import get_players, get_player_placements, view_games, get_player_calls, get_one_two, get_player_games
 
 players = get_players()
 
@@ -59,3 +59,25 @@ def count_one_two(player_id):
             other_one_twos += 1
         total += 1
     return own_one_twos, other_one_twos, total
+
+def games_won(player_id):
+    games = get_player_games(player_id)
+
+    wins = 0
+    for score1, score2, team in games:
+        if team == 1 and score1 > score2:
+            wins += 1
+        elif team == 2 and score2 > score1:
+            wins += 1
+
+    win_rate = wins / len(games)
+
+    score_diff = 0
+    for score1, score2, team in games:
+        if team == 1:
+            score_diff += score1 - score2
+        elif team == 2:
+            score_diff += score2 - score1
+    avg_score_diff = score_diff / len(games)
+
+    return win_rate, avg_score_diff

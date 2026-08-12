@@ -326,6 +326,24 @@ def get_one_two(player_id):
 
     return [row[0] for row in one_twos]
 
+def get_player_games(player_id):
+    conn = sqlite3.connect("tichu.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT games.score1, games.score2, game_players.team
+        FROM game_players
+            JOIN games
+                ON game_players.game_id = games.id
+        WHERE game_players.player_id = ?
+    """, (player_id,))
+
+    player_games = cursor.fetchall()
+
+    conn.close()
+
+    return player_games
+
 cursor.execute("SELECT * FROM players")
 
 players = cursor.fetchall()

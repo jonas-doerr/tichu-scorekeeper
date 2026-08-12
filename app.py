@@ -157,11 +157,38 @@ if st.session_state.game:
     if game.rounds:
         st.subheader("Rounds Played")
 
-        for number, round_data in enumerate(game.rounds, start=1):
-            st.write(
-                f"Round {number}: "
-                f"{round_data.final_score1} to {round_data.final_score2}"
-            )
+        col20, col21 = st.columns(2)
+
+        with col20:
+            for number, round_data in enumerate(game.rounds, start=1):
+                st.write(
+                    f"Round {number}: "
+                    f"{round_data.final_score1} to {round_data.final_score2}"
+                )
+
+        with col21:
+            if st.button("Undo Last Round"):
+
+                if game.rounds:
+
+                    last_round = game.rounds[-1]
+
+                    game.rounds.pop()
+
+                    game.score1 = sum(
+                        round_data.final_score1
+                        for round_data in game.rounds
+                    )
+
+                    game.score2 = sum(
+                        round_data.final_score2
+                        for round_data in game.rounds
+                    )
+
+                    st.rerun()
+
+                else:
+                    st.warning("There are no rounds to undo.")
 
     if st.button("End Game") or game.winner() != None:
         #Find today's date and save the game file

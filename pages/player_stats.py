@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from database import get_players, get_player_placements, get_games_played, get_player_calls
-from analysis import placement_list, call_stats, count_one_two
+from database import get_players, get_player_placements, get_games_played, get_player_calls, save_player
+from analysis import placement_list, call_stats, count_one_two, games_won
+from scorekeeper import Player
 
 
 st.title("Player Statistics")
@@ -10,19 +11,24 @@ st.title("Player Statistics")
 if "selected_player_id" not in st.session_state:
     st.session_state.selected_player_id = None
 
-players = get_players()
+if "creating_player" not in st.session_state:
+    st.session_state.creating_player = False
 
-if players:
-    df = pd.DataFrame(
-        players,
-        columns=["Player ID", "Name"]
-    )
-    st.dataframe(
-        df,
-        hide_index=True
-    )
-else:
-    st.write("No players recorded yet.")
+if st.button("Add Player"):
+    st.session_state.creating_player = True
+
+if st.session_state.creating_player:
+    name = st.text_input("Player Name")
+    if st.button("Create New Player"):
+        if name != None:
+            new_player = Player(name)
+            save_player(new_player)
+            st.session_state.creating_player = False
+            st.rerun()
+    else:
+        st.warning("Please input a player name")
+
+players = get_players()
 
 player_dict = {
     name: player_id
@@ -38,27 +44,38 @@ st.session_state.selected_player_id = player_dict[selected_name]
 
 st.write("Player ID:", st.session_state.selected_player_id)
 
-placement_counts, average_placement = placement_list(st.session_state.selected_player_id)
+try:
+    placement_counts, average_placement = placement_list(st.session_state.selected_player_id)
 
-labels = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
-df = pd.DataFrame(
-    [
-        {"Placement": labels[place], "Count": count}
-        for place, count in placement_counts.items()
-    ]
-)
+    labels = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th"}
+    df = pd.DataFrame(
+        [
+            {"Placement": labels[place], "Count": count}
+            for place, count in placement_counts.items()
+        ]
+    )
 
-col1, col2 = st.columns(2)
+    col1, col2, col11, col12 = st.columns(4)
 
-with col1:
-    games_played = get_games_played(st.session_state.selected_player_id)
-    st.metric("Games Played", games_played)
+    with col1:
+        games_played = get_games_played(st.session_state.selected_player_id)
+        st.metric("Games Played", games_played)
 
-with col2:
-    st.metric("Average Placement", f"{average_placement:.2f}")
+    with col2:
+        st.metric("Average Placement", f"{average_placement:.2f}")
 
-st.subheader(f"{selected_name}'s Placements")
-st.bar_chart(df, x="Placement", y="Count")
+    win_rate, avg_score_diff = games_won(st.session_state.selected_player_id)
+    with col11:
+        st.metric("Win Rate", f"{100 * win_rate:.1f}%")
+
+    with col12:
+        st.metric("Average Score Difference", f"{avg_score_diff}")
+
+    st.subheader(f"{selected_name}'s Placements")
+    st.bar_chart(df, x="Placement", y="Count")
+
+except ZeroDivisionError:
+    st.warning("No games played by this player")
 
 tichus, grand_tichus, successful_tichus, successful_grand_tichus = call_stats(st.session_state.selected_player_id)
 
@@ -99,6 +116,8 @@ fig = px.bar(
 st.plotly_chart(fig, width='stretch')
 
 one_twos_for, one_twos_against, total_rounds = count_one_two(st.session_state.selected_player_id)
+
+st.subheader("1-2 Statistics")
 
 col7, col8, col9, col10 = st.columns(4)
 

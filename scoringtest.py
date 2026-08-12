@@ -108,7 +108,7 @@ def make_random_calls(players):
 print(f"{playerlist[0].name} and {playerlist[1].name} vs {playerlist[2].name} and {playerlist[3].name}")
 
 #play full game
-def simulate_game():
+def simulate_game(playerlist):
     while game.winner() not in ["Team 1", "Team 2"]:
         score = random.randint(-5, 25) * 5
         calls = make_random_calls(playerlist)
@@ -138,7 +138,7 @@ def simulate_game():
         save_placements(round_id, round_data)
         save_calls(round_id, round_data)
 
-simulate_game()
+simulate_game(playerlist)
 
 #print database results
 # Options: "players", "games", "rounds", "placements", "calls", ""
