@@ -32,10 +32,53 @@ for id, name in database_players:
 
 database_names = [player.name for player in player_objects]
 
-selected_players = st.multiselect(
-    "Choose 4 players (First 2 are team 1, second 2 are on team 2)",
-    database_names
+# selected_players = st.multiselect(
+#     "Choose 4 players (First 2 are team 1, second 2 are on team 2)",
+#     database_names
+# )
+
+team1_player1 = st.selectbox(
+    "Team 1 - Player 1",
+    database_names,
+    key="team1_player1"
 )
+
+team1_player2 = st.selectbox(
+    "Team 1 - Player 2",
+    [name for name in database_names if name != team1_player1],
+    key="team1_player2"
+)
+
+team2_player1 = st.selectbox(
+    "Team 2 - Player 1",
+    [
+        name for name in database_names
+        if name not in [team1_player1, team1_player2]
+    ],
+    key="team2_player1"
+)
+
+team2_player2 = st.selectbox(
+    "Team 2 - Player 2",
+    [
+        name for name in database_names
+        if name not in [team1_player1, team1_player2, team2_player1]
+    ],
+    key="team2_player2"
+)
+
+selected_names = [
+    team1_player1,
+    team1_player2,
+    team2_player1,
+    team2_player2
+]
+
+selected_players = [
+    next(player for player in player_objects
+         if player.name == name)
+    for name in selected_names
+]
 
 
 #Begin the game when players are ready
@@ -45,16 +88,9 @@ if st.button("Start Game"):
         st.warning("Choose exactly 4 players")
 
     else:
-        selected_players = [
-            player
-            for player in player_objects
-            if player.name in selected_players
-        ]
-
-        st.session_state.players = selected_players
-
         st.session_state.team1 = selected_players[:2]
         st.session_state.team2 = selected_players[2:]
+        st.session_state.players = selected_players
 
         st.session_state.game = TichuGame(
             selected_players
